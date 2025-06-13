@@ -12,13 +12,20 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Log file
-LOG_FILE="$HOME/hyprland-setup.log"
+LOG_DIR="$HOME/.local/log"
+LOG_FILE="$LOG_DIR/hyprland-setup.log"
+
+# Create log directory if it doesn't exist
+mkdir -p "$LOG_DIR"
 
 # Logging function
 log() {
     local message="$1"
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    echo -e "${GREEN}[$timestamp]${NC} $message" | tee -a "$LOG_FILE"
+    if ! echo -e "${GREEN}[$timestamp]${NC} $message" | tee -a "$LOG_FILE" 2>/dev/null; then
+        echo -e "${RED}Warning: Could not write to log file. Continuing without logging.${NC}" >&2
+        echo -e "${GREEN}[$timestamp]${NC} $message"
+    fi
 }
 
 # Error handling
